@@ -1,118 +1,83 @@
-package alpine
+package alpine_test
 
 import (
-	"strings"
 	"testing"
 
+	a "github.com/jlucasnsilva/gomponents-alpine"
 	g "github.com/maragudk/gomponents"
 	"github.com/stretchr/testify/assert"
 )
 
-type (
-	testCase struct {
-		label    string
-		expected string
-		node     g.Node
-	}
-)
-
-func TestAlpine(t *testing.T) {
-	tests := []testCase{
-		{
-			label:    "x-data",
-			expected: ` x-data="{ open: false }"`,
-			node:     Data("{ open: false }"),
+func TestCases(t *testing.T) {
+	cases := map[string]struct {
+		input    g.Node
+		expected g.Node
+	}{
+		"Data": {
+			input:    a.Data("{ open: false }"),
+			expected: g.Attr("x-data", "{ open: false }"),
 		},
-		{
-			label:    "x-bind",
-			expected: ` x-bind:class="! open ? 'hidden' : ''"`,
-			node:     Bind("class", "! open ? 'hidden' : ''"),
+		"Bind": {
+			input:    a.Bind("class", "! open ? 'hidden' : ''"),
+			expected: g.Attr("x-bind:class", "! open ? 'hidden' : ''"),
 		},
-		{
-			label:    "x-on",
-			expected: ` x-on:click="open = ! open"`,
-			node:     On("click", "open = ! open"),
+		"On": {
+			input:    a.On("click", "open = ! open"),
+			expected: g.Attr("x-on:click", "open = ! open"),
 		},
-		{
-			label:    "x-text",
-			expected: ` x-text="new Date().getFullYear()"`,
-			node:     Text("new Date().getFullYear()"),
+		"Text": {
+			input:    a.Text("new Date().getFullYear()"),
+			expected: g.Attr("x-text", "new Date().getFullYear()"),
 		},
-		{
-			label:    "x-html",
-			expected: ` x-html="(await axios.get('/some/html/partial')).data"`,
-			node:     HTML("(await axios.get('/some/html/partial')).data"),
+		"HTML": {
+			input:    a.HTML("(await axios.get('/some/html/partial')).data"),
+			expected: g.Attr("x-html", "(await axios.get('/some/html/partial')).data"),
 		},
-		{
-			label:    "x-model",
-			expected: ` x-model="search"`,
-			node:     Model("search"),
+		"Model": {
+			input:    a.Model("search"),
+			expected: g.Attr("x-model", "search"),
 		},
-		{
-			label:    "x-show",
-			expected: ` x-show="open"`,
-			node:     Show("open"),
+		"Show": {
+			input:    a.Show("open"),
+			expected: g.Attr("x-show", "open"),
 		},
-		{
-			label:    "x-transition",
-			expected: ` x-transition`,
-			node:     Transition(),
+		"Transition": {
+			input:    a.Transition(),
+			expected: g.Attr("x-transition"),
 		},
-		{
-			label:    "x-for",
-			expected: ` x-for="post in posts"`,
-			node:     For("post in posts"),
+		"For": {
+			input:    a.For("post in posts"),
+			expected: g.Attr("x-for", "post in posts"),
 		},
-		{
-			label:    "x-if",
-			expected: ` x-if="open"`,
-			node:     If("open"),
+		"If": {
+			input:    a.If("open"),
+			expected: g.Attr("x-if", "open"),
 		},
-		{
-			label:    "x-init",
-			expected: ` x-init="date = new Date()"`,
-			node:     Init("date = new Date()"),
+		"Init": {
+			input:    a.Init("date = new Date()"),
+			expected: g.Attr("x-init", "date = new Date()"),
 		},
-		{
-			label:    "x-effect",
-			expected: ` x-effect="console.log('Count is '+count)"`,
-			node:     Effect("console.log('Count is '+count)"),
+		"Effect": {
+			input:    a.Effect("console.log('Count is '+count)"),
+			expected: g.Attr("x-effect", "console.log('Count is '+count)"),
 		},
-		{
-			label:    "x-ref",
-			expected: ` x-ref="content"`,
-			node:     Ref("content"),
+		"Ref": {
+			input:    a.Ref("content"),
+			expected: g.Attr("x-ref", "content"),
 		},
-		{
-			label:    "x-cloak",
-			expected: ` x-cloak`,
-			node:     Cloak(),
+		"Cloak": {
+			input:    a.Cloak(),
+			expected: g.Attr("x-cloak"),
 		},
-		{
-			label:    "x-ignore",
-			expected: ` x-ignore`,
-			node:     Ignore(),
+		"Ignore": {
+			input:    a.Ignore(),
+			expected: g.Attr("x-ignore"),
 		},
 	}
 
-	for _, test := range tests {
-		test := test
-		t.Run(test.label, func(t *testing.T) {
-			res, err := render(test.node)
-			assert.Nil(t, err)
-			assert.Equal(t, test.expected, res)
+	for label, c := range cases {
+		t.Run(label, func(t *testing.T) {
+			assert.Equal(t, c.expected, c.input)
 		})
 	}
-
-	assert.Panics(t, func() {
-		g.Attr("foo", "bar", "baz")
-	})
-}
-
-func render(n g.Node) (string, error) {
-	b := strings.Builder{}
-	if err := n.Render(&b); err != nil {
-		return "", err
-	}
-	return b.String(), nil
 }
