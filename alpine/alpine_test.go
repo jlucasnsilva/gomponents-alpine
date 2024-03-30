@@ -4,7 +4,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/maragudk/gomponents"
+	g "github.com/maragudk/gomponents"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -12,7 +12,7 @@ type (
 	testCase struct {
 		label    string
 		expected string
-		node     gomponents.Node
+		node     g.Node
 	}
 )
 
@@ -105,11 +105,11 @@ func TestAlpine(t *testing.T) {
 	}
 
 	assert.Panics(t, func() {
-		attribute("foo", "bar", "baz")
+		g.Attr("foo", "bar", "baz")
 	})
 }
 
-func render(n gomponents.Node) (string, error) {
+func render(n g.Node) (string, error) {
 	b := strings.Builder{}
 	if err := n.Render(&b); err != nil {
 		return "", err
