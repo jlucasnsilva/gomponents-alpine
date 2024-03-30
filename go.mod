@@ -1,4 +1,4 @@
-module github.com/jlucasnsilva/gomponents/alpine
+module github.com/jlucasnsilva/gomponents-alpine
 
 go 1.22.0
 
